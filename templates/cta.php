@@ -1,0 +1,1 @@
+<section class="cta"><div class="container"><div><p class="eyebrow">CHAQUE DÉTAIL COMPTE</p><h2>Votre prochain trajet commence ici.</h2><p>Un transfert, un rendez-vous, une journée à votre rythme.</p></div><a class="button" href="/contact">Préparer mon trajet <?= icon('arrow') ?></a></div></section>
