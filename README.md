@@ -41,7 +41,7 @@ Vérifier après déploiement les URLs propres, les pages privées inaccessibles
 
 `/`, `/services`, les trois pages de services, `/vehicules`, `/destinations`, `/faq`, `/contact`, `/mentions-legales`, `/politique-confidentialite`, `/cgv`, `/sitemap.xml`, `/robots.txt`.
 
-Les images WebP sont des illustrations générées pour ce projet, inspirées de la maquette, et ne prouvent ni la possession, ni la disponibilité, ni le millésime des véhicules. Les capacités sont présentées à titre indicatif et soumises à confirmation. Aucun faux avis ou engagement commercial non confirmé n’est ajouté. Aucun traceur non essentiel, police distante ou carte embarquée n’est chargé. Le lien Itinéraire n’ouvre Google Maps que sur action de l’utilisateur.
+Les images WebP sont des illustrations générées ou retouchées pour ce projet, inspirées de la maquette. La Classe V reprend le modèle de la photo fournie par l’utilisateur, aussi bien dans les cartes véhicules que dans la scène du hero partagée par les bannières et la page Contact. Ces visuels ne prouvent ni la possession, ni la disponibilité, ni le millésime des véhicules. Les capacités sont présentées à titre indicatif et soumises à confirmation. Aucun faux avis ou engagement commercial non confirmé n’est ajouté. Aucun traceur non essentiel, police distante ou carte embarquée n’est chargé. Le lien Itinéraire n’ouvre Google Maps que sur action de l’utilisateur.
 
 ## À compléter avant publication
 
