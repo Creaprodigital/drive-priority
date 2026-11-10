@@ -18,7 +18,7 @@ Dans l’environnement cloud préparé, PHP est accessible via `/workspace/.tool
 PHP_BIN=/workspace/.tools/bin/php python3 tests/smoke.py
 ```
 
-Les tests démarrent deux serveurs PHP temporaires et un SMTP TLS local avec certificat de test. Ils n’envoient aucun email extérieur. Ports de test : 8090, 8091 et 25252. Tests : 12 routes et métadonnées, 404 et fichiers privés, CSRF, antispam, échappement et validation, succès SMTP, absence de configuration et limitation d’envoi. Les certificats de test ne sont jamais utilisés par l’application en production.
+Les tests démarrent deux serveurs PHP temporaires et un SMTP TLS local avec certificat de test. Ils n’envoient aucun email extérieur. Ports de test : 8090, 8091 et 25252. Tests : 24 routes et métadonnées, 404 et fichiers privés, CSRF, antispam, échappement et validation, succès SMTP, absence de configuration et limitation d’envoi. Les certificats de test ne sont jamais utilisés par l’application en production.
 
 ## Configuration et Hostinger
 
@@ -70,3 +70,11 @@ La carte Mercedes Classe V possède désormais son propre visuel parisien (`asse
 Les Classes C et E disposent également de leurs propres illustrations parisiennes (`classe-c-paris-card.webp` et `classe-e-paris-card.webp`), avec chaque berline entière et un cadrage identique à la Classe V. Ces images n’affectent pas le hero.
 
 Les trois cartes véhicules affichent une grande photographie sur toute leur largeur, au-dessus des informations, avec un zoom adapté à chaque modèle et un cadrage conservant les véhicules entiers.
+
+## Destinations & escapades
+
+La rubrique DESTINATIONS du menu ouvre une galerie originale noir et or avec 12 images générées pour Driver Priority : Paris de jour et de nuit, Versailles, Giverny, Fontainebleau & INSEAD, Reims & Champagne, Val de Loire, Normandie, Mont-Saint-Michel, Bourgogne, Parc Astérix et Disneyland Paris. Les textes et la mise en page sont propres à ce site ; le visuel d’un autre site fourni en référence n’est pas réutilisé.
+
+Chaque destination dispose de sa fiche (`/destinations/<slug>`), de métadonnées et d’une entrée dans le sitemap. Les images WebP sont versionnées et chargées progressivement. Les filtres fonctionnent au clavier ; sans JavaScript, toutes les destinations restent accessibles. Les devis préremplissent le service et l’objet du formulaire Contact, sans ajouter de réservation ni paiement automatique. Aucun billet, guide, dégustation ou partenariat commercial n’est présumé inclus.
+
+Test fonctionnel supplémentaire : `NODE_PATH=/workspace/.tools/browser/node_modules node tests/destinations.cjs` (serveur PHP sur le port 8080 actif). Vérifie les 12 fiches, les images et leur versionnement, 7 largeurs d’écran, les filtres clavier, le menu actif, le devis prérempli et échappé et l’accès sans JavaScript.

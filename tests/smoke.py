@@ -69,7 +69,7 @@ class Smoke(unittest.TestCase):
    self.assertEqual(len(re.findall('<h1[ >]',body)),1,path)
    title=re.search('<title>(.*?)</title>',body)[1];self.assertNotIn(title,titles);titles.add(title)
    desc=re.search('name="description" content="([^"]+)"',body)[1];self.assertNotIn(desc,descriptions);descriptions.add(desc)
-  self.assertEqual(len(titles),12)
+  self.assertEqual(len(titles),24)
   self.assertEqual(c.get('/inconnue')[0],404)
   for path in ['/config/site.php','/.env','/vendor/phpmailer/SMTP.php','/tests/smoke.py','/README.md'] : self.assertEqual(c.get(path)[0],404)
  def test_cache_headers_and_versioned_backgrounds(self):
