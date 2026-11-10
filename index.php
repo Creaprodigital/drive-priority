@@ -13,7 +13,8 @@ header('Cache-Control: no-cache, must-revalidate');
 header('X-LiteSpeed-Cache-Control: no-cache');
 
 $site=require __DIR__.'/config/site.php';
-require __DIR__.'/src/content.php'; require __DIR__.'/src/legal.php'; require __DIR__.'/src/destinations.php';
+require __DIR__.'/src/i18n.php';
+require __DIR__.'/src/content.php'; require __DIR__.'/src/legal.php'; require __DIR__.'/src/destinations.php'; require __DIR__.'/src/guides.php';
 function siteText(array $items, array $site): array {
  $replacements=[]; foreach(['siret','siren','vat','capital','address','phone','company','email'] as $key) $replacements['__'.strtoupper($key).'__']=$site[$key];
  foreach($items as $key=>$value) $items[$key]=is_array($value)?siteText($value,$site):strtr($value,$replacements);
@@ -27,29 +28,46 @@ function icon($name): string {
  return '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="'.($paths[$name]??$paths['arrow']).'"/></svg>';
 }
 function accordion($items): void { foreach($items as $q=>$a) echo '<details><summary>'.e($q).'<span>+</span></summary><p>'.e($a).'</p></details>'; }
-$path=rawurldecode(parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH)?:'/');
+$path=$routePath;
 $path=$path==='/'?'/':rtrim($path,'/');
 $pages=['/'=>['Chauffeur privé à Paris & en Île-de-France','Vos transferts privés, trajets professionnels et mises à disposition avec DRIVER PRIORITY. Demandez votre devis.'],'/services'=>['Nos services','Transferts aéroports, gares et chauffeur à disposition : découvrez les services DRIVER PRIORITY.'],'/faq'=>['Vos questions, nos réponses','Réservation, tarifs, bagages et transferts : préparez votre déplacement avec la FAQ DRIVER PRIORITY.'],'/contact'=>['Parlons de votre prochain trajet','Contactez DRIVE PRIORITY à Osny : demande de devis, transfert privé ou mise à disposition.'],'/vehicules'=>['Nos véhicules','Découvrez les catégories de véhicules présentées pour vos déplacements privés et professionnels.'],'/destinations'=>['Destinations & escapades avec chauffeur privé','Découvrez Paris, Versailles, Giverny, la Champagne et nos idées d’escapades au départ de Paris. Transport privé sur devis avec DRIVER PRIORITY.']];
 foreach($services as $slug=>$s) $pages['/services/'.$slug]=[$s['title'],$s['intro'].' Découvrez ce service et demandez un devis à DRIVER PRIORITY.'];
 foreach($legal as $slug=>$s) $pages['/'.$slug]=[$s['title'],$s['intro']];
 foreach($destinations as $slug=>$d) $pages['/destinations/'.$slug]=[$d['title'],$d['intro'].' Préparez votre transport privé vers cette destination avec DRIVER PRIORITY, sur devis.'];
+foreach($guides as $slug=>$g) $pages['/guides/'.$slug]=[$g['title'],$g['description']];
+$pages['/guides']=['Chauffeur privé VAN : guides pratiques','Guides chauffeur privé VAN à Paris : visites, transferts aéroports et gares, bagages, rendez-vous et demande de devis.'];
+$guideSlug=str_starts_with($path,'/guides/')?substr($path,8):'';
+$guide=$guides[$guideSlug]??null;
 $destinationSlug=str_starts_with($path,'/destinations/')?substr($path,14):'';
 $destination=$destinations[$destinationSlug]??null;
-if($path==='/sitemap.xml') { header('Content-Type: application/xml; charset=utf-8'); echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'; foreach($pages as $url=>$v) echo '<url><loc>'.e($site['url'].($url==='/'?'/':$url)).'</loc></url>'; echo '</urlset>'; exit; }
+if($path==='/sitemap.xml') {
+ header('Content-Type: application/xml; charset=utf-8');
+ echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">';
+ foreach($pages as $route=>$metadata) foreach(['fr','en'] as $language) {
+  echo '<url><loc>'.e($site['url'].languagePath($route,$language)).'</loc>';
+  foreach(['fr','en'] as $alternative) echo '<xhtml:link rel="alternate" hreflang="'.$alternative.'" href="'.e($site['url'].languagePath($route,$alternative)).'"/>';
+  echo '</url>';
+ }
+ echo '</urlset>'; exit;
+}
 if($path==='/robots.txt') { header('Content-Type: text/plain'); echo "User-agent: *\nAllow: /\nSitemap: ".$site['url']."/sitemap.xml\n"; exit; }
-$notfound=!isset($pages[$path]); if($notfound) { http_response_code(404); $pages[$path]=['Page introuvable','Cette page n’existe pas. Retrouvez les services de DRIVER PRIORITY.']; }
+$notfound=!isset($pages[$path]) || ($lang==='en' && !in_array($requestPath,$englishRoutes,true)); if($notfound) { http_response_code(404); $pages[$path]=['Page introuvable','Cette page n’existe pas. Retrouvez les services de DRIVER PRIORITY.']; }
+header('Content-Language: '.$lang);
 header('X-Content-Type-Options: nosniff'); header('Referrer-Policy: strict-origin-when-cross-origin'); header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'");
 $data=[]; $errors=[]; $sent=false;
 if($path==='/contact') {
  ini_set('session.use_strict_mode','1'); session_set_cookie_params(['httponly'=>true,'secure'=>!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=='off','samesite'=>'Lax']); session_start();
  header('Cache-Control: no-store'); $_SESSION['csrf']??=bin2hex(random_bytes(32)); $_SESSION['form_time']??=time();
- if($_SERVER['REQUEST_METHOD']==='POST') { require __DIR__.'/src/contact.php'; [$data,$errors,$sent]=processContact($site); if($errors) http_response_code(422); if($sent) { $_SESSION['sent']=true; header('Location: /contact',true,303); exit; } }
+ if($_SERVER['REQUEST_METHOD']==='POST') { require __DIR__.'/src/contact.php'; [$data,$errors,$sent]=processContact($site); if($errors) http_response_code(422); if($sent) { $_SESSION['sent']=true; header('Location: '.languagePath('/contact',$lang),true,303); exit; } }
  else { $sent=$_SESSION['sent']??false; unset($_SESSION['sent']); }
 }
 [$title,$description]=$pages[$path]; $home=$path==='/';
+if($lang==='en') ob_start('englishHtml');
 require __DIR__.'/templates/header.php';
 if($home) require __DIR__.'/templates/home.php';
 elseif($path==='/destinations') require __DIR__.'/templates/destinations.php';
+elseif($path==='/guides') require __DIR__.'/templates/guides.php';
+elseif($guide) require __DIR__.'/templates/guide.php';
 elseif($destination) require __DIR__.'/templates/destination.php';
 else { echo '<section class="page-banner"><div class="container"><nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span>/</span><span>'.e($title).'</span></nav><p class="eyebrow">DRIVER PRIORITY · CHAUFFEUR PRIVÉ</p><h1>'.e($title).'</h1><p>'.e($description).'</p></div></section>'; }
 if($path==='/services') { echo '<section class="section container"><div class="section-heading"><p class="eyebrow">CHAQUE TRAJET MÉRITE UNE ATTENTION PARTICULIÈRE</p><h2>Un service, pour chaque occasion.</h2><p>Le confort d’un chauffeur privé, la liberté de choisir votre destination.</p></div>'; require __DIR__.'/templates/service-cards.php'; echo '</section>'; }
@@ -63,3 +81,4 @@ $l=substr($path,1); if(isset($legal[$l])) { $doc=$legal[$l]; echo '<section clas
 if($notfound) echo '<section class="section container centered"><h2>Retrouvons le bon chemin.</h2><a href="/" class="button">Revenir à l’accueil '.icon('arrow').'</a></section>';
 if(!$home && !str_starts_with($path,'/destinations') && !isset($legal[$l??'']) && $path!='/contact' && !$notfound) require __DIR__.'/templates/cta.php';
 require __DIR__.'/templates/footer.php';
+if($lang==='en') ob_end_flush();

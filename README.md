@@ -4,7 +4,7 @@ Site PHP 8.2+ sans framework, créé à partir de la maquette fournie. Le dépô
 
 ## Développement
 
-PHP 8.2+ avec `session`, `openssl`, `mbstring` ; Python 3 et OpenSSL pour les tests. Aucun service de base de données ni installation npm n’est nécessaire à l’application. PHPMailer 6.10.0 est inclus dans `vendor/phpmailer` avec sa licence LGPL 2.1.
+PHP 8.2+ avec `session`, `openssl`, `mbstring`, `dom` ; Python 3 et OpenSSL pour les tests. Aucun service de base de données ni installation npm n’est nécessaire à l’application. PHPMailer 6.10.0 est inclus dans `vendor/phpmailer` avec sa licence LGPL 2.1.
 
 Depuis la racine du dépôt :
 
@@ -18,7 +18,7 @@ Dans l’environnement cloud préparé, PHP est accessible via `/workspace/.tool
 PHP_BIN=/workspace/.tools/bin/php python3 tests/smoke.py
 ```
 
-Les tests démarrent deux serveurs PHP temporaires et un SMTP TLS local avec certificat de test. Ils n’envoient aucun email extérieur. Ports de test : 8090, 8091 et 25252. Tests : 24 routes et métadonnées, 404 et fichiers privés, CSRF, antispam, échappement et validation, succès SMTP, absence de configuration et limitation d’envoi. Les certificats de test ne sont jamais utilisés par l’application en production.
+Les tests démarrent deux serveurs PHP temporaires et un SMTP TLS local avec certificat de test. Ils n’envoient aucun email extérieur. Ports de test : 8090, 8091 et 25252. Tests : 56 routes et métadonnées, 404 et fichiers privés, CSRF, antispam, échappement et validation, succès SMTP, absence de configuration et limitation d’envoi. Les certificats de test ne sont jamais utilisés par l’application en production.
 
 ## Configuration et Hostinger
 
@@ -78,3 +78,17 @@ La rubrique DESTINATIONS du menu ouvre une galerie originale noir et or avec 12 
 Chaque destination dispose de sa fiche (`/destinations/<slug>`), de métadonnées et d’une entrée dans le sitemap. Les images WebP sont versionnées et chargées progressivement. Les filtres fonctionnent au clavier ; sans JavaScript, toutes les destinations restent accessibles. Les devis préremplissent le service et l’objet du formulaire Contact, sans ajouter de réservation ni paiement automatique. Aucun billet, guide, dégustation ou partenariat commercial n’est présumé inclus.
 
 Test fonctionnel supplémentaire : `NODE_PATH=/workspace/.tools/browser/node_modules node tests/destinations.cjs` (serveur PHP sur le port 8080 actif). Vérifie les 12 fiches, les images et leur versionnement, 7 largeurs d’écran, les filtres clavier, le menu actif, le devis prérempli et échappé et l’accès sans JavaScript.
+
+## Guides SEO et version anglaise
+
+Le footer affiche uniquement les coordonnées de contact, sans adresse postale. L’adresse légale reste dans la page Contact, les mentions légales et les données structurées de l’entreprise.
+
+`/guides` présente trois articles originaux autour de « chauffeur privé VAN » : visites de Paris, transferts aéroports et transferts gares. Chaque guide comprend des conseils pratiques, un sommaire, des questions fréquentes, des liens internes, une demande de devis et des données structurées Article. Les textes ne promettent pas de prix, d’attente gratuite ni de prestations non confirmées.
+
+Le site comprend 28 pages françaises et 28 équivalents anglais sous `/en`, avec des URL anglaises, une canonical propre, des alternates `hreflang` réciproques `fr`/`en` et `x-default`, un sitemap bilingue et `Content-Language`. Le sélecteur FR/EN mène à la page équivalente. Les URL françaises existantes restent inchangées. Les chemins sont définis dans `src/i18n.php`.
+
+La traduction est produite côté serveur à partir du catalogue éditorial `src/translations/en.json`, sans API externe ni traduction JavaScript. Les textes, attributs accessibles et métadonnées sont localisés ; les liens et actions des formulaires restent dans la langue choisie. Les valeurs techniques des services, les identifiants, jetons CSRF et les saisies utilisateur sont préservés. Le formulaire anglais conserve ses validations et protections ; les confirmations et erreurs sont traduites et la redirection après envoi reste en anglais. Les coordonnées publiques du catalogue utilisent des marqueurs liés à `config/site.php`.
+
+Toute nouvelle formulation française doit recevoir une entrée anglaise dans ce catalogue. Les paragraphes des pages juridiques sont également traduits et restent des projets à compléter et valider ; la traduction ne remplace pas une validation juridique. Les traductions ne modifient pas les conditions commerciales.
+
+Validation : `PHP_BIN=/workspace/.tools/bin/php python3 tests/smoke.py` exécute 9 tests, dont SMTP TLS local en français et en anglais et préservation/échappement des saisies. `NODE_PATH=/workspace/.tools/browser/node_modules node tests/i18n.cjs` vérifie les 56 pages sur 6 largeurs, les canonical/hreflang, les liens, le footer, les langues équivalentes, les filtres et le devis prérempli anglais. Les autres tests navigateur et de cache restent disponibles.

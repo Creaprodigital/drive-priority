@@ -17,6 +17,6 @@ if (filters) {
     filters.querySelectorAll('button').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
     let visible = 0;
     cards.forEach(card => { card.hidden = category !== 'all' && card.dataset.destinationCategory !== category; if (!card.hidden) visible++; });
-    if (count) count.textContent = `${visible} destination${visible > 1 ? 's' : ''} à découvrir`;
+    if (count) count.textContent = document.documentElement.lang === 'en' ? `${visible} destination${visible > 1 ? 's' : ''} to discover` : `${visible} destination${visible > 1 ? 's' : ''} à découvrir`;
   });
 }

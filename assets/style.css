@@ -166,3 +166,26 @@
 .whatsapp-float:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 .site-footer{padding-bottom:84px}
 @media(max-width:640px){.whatsapp-float{width:56px;height:56px;right:max(16px,env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom))}.whatsapp-float svg{width:30px;height:30px}}
+.language-switch{border:1px solid #76602c;border-radius:4px;color:var(--light-gold);padding:5px 8px;font-size:14px;flex-shrink:0}
+.language-switch:hover{background:#302919}
+.guide-card-title{font-size:29px;letter-spacing:-.4px;line-height:1.25;margin:0 0 17px}
+.guide-related{margin-top:35px;padding-top:20px;border-top:1px solid var(--line)}
+.guide-related a{display:block;font-size:16px;color:#826111;text-decoration:underline;margin-bottom:14px}
+.guide-article section{scroll-margin-top:30px}
+.header-inner{gap:16px}
+#main-nav{gap:18px}
+@media(min-width:1201px) and (max-width:1350px){
+.menu-toggle{display:flex;flex-direction:column;justify-content:center;gap:5px;width:35px;height:38px;background:none;border:0;order:3;cursor:pointer}
+.menu-toggle span{width:23px;height:1px;background:var(--light-gold)}
+.header-phone{margin-left:auto}
+#main-nav{display:none;position:absolute;top:91px;left:0;right:0;background:#101010;height:auto;padding:15px 28px;border-bottom:1px solid #55451f}
+#main-nav.is-open{display:flex;flex-direction:column;align-items:stretch;gap:0}
+#main-nav a{padding:12px}
+#main-nav a[aria-current]:after{left:12px;bottom:5px;width:30px}
+}
+@media(max-width:640px){.header-inner{gap:10px}.language-switch{padding:4px 6px}.guide-card-title{font-size:27px}}
+@media(max-width:350px){.header-inner{gap:7px}.brand-words{font-size:12px}.brand small{letter-spacing:2.3px}.header-phone{padding:0}.menu-toggle{width:23px}}
+
+.section-heading>h1{font-size:clamp(36px,4vw,52px)}
+.guide-service-image{display:block;width:100%;height:100%;background-image:url('/assets/services.webp');background-size:300% auto;background-position:left 45%}
+.guide-station-image{background-position:center 45%}

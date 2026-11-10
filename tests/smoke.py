@@ -16,12 +16,12 @@ class Client:
   try:r=self.opener.open(self.base+path)
   except urllib.error.HTTPError as e:r=e
   return r.status,r.read().decode()
- def post(self,data):
-  try:r=self.opener.open(self.base+'/contact',parse.urlencode(data).encode())
+ def post(self,data,path='/contact'):
+  try:r=self.opener.open(self.base+path,parse.urlencode(data).encode())
   except urllib.error.HTTPError as e:r=e
   return r.status,r.read().decode()
- def form(self):
-  status,body=self.get('/contact'); assert status==200
+ def form(self,path='/contact'):
+  status,body=self.get(path); assert status==200
   return dict(csrf=re.search(r'name="csrf" value="([^"]+)"',body)[1],name='Test Local',email='person@example.test',phone='0600000000',subject='Test',service='Transfert Aéroports',message='Message de test synthétique',consent='1')
 class Smoke(unittest.TestCase):
  @classmethod
@@ -32,21 +32,22 @@ class Smoke(unittest.TestCase):
   ctx=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER); ctx.load_cert_chain(cert,key)
   cls.sock=socket.socket(); cls.sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1); cls.sock.bind(('127.0.0.1',25252)); cls.sock.listen()
   def smtp():
-   conn,_=cls.sock.accept()
-   with ctx.wrap_socket(conn,server_side=True) as s:
-    f=s.makefile('rwb'); f.write(b'220 localhost test SMTP\r\n'); f.flush()
-    while line:=f.readline():
-     command=line.decode().strip()
-     if command.startswith('EHLO'):f.write(b'250-localhost\r\n250 SIZE 100000\r\n')
-     elif command=='DATA':
-      f.write(b'354 Send message\r\n'); f.flush(); data=b''
-      while (line:=f.readline())!=b'.\r\n':
-       if not line:break
-       data+=line
-      cls.messages.append(data); f.write(b'250 queued\r\n')
-     elif command=='QUIT':f.write(b'221 bye\r\n'); f.flush(); break
-     else:f.write(b'250 ok\r\n')
-     f.flush()
+   for _ in range(2):
+    conn,_=cls.sock.accept()
+    with ctx.wrap_socket(conn,server_side=True) as s:
+     f=s.makefile('rwb'); f.write(b'220 localhost test SMTP\r\n'); f.flush()
+     while line:=f.readline():
+      command=line.decode().strip()
+      if command.startswith('EHLO'):f.write(b'250-localhost\r\n250 SIZE 100000\r\n')
+      elif command=='DATA':
+       f.write(b'354 Send message\r\n'); f.flush(); data=b''
+       while (line:=f.readline())!=b'.\r\n':
+        if not line:break
+        data+=line
+       cls.messages.append(data); f.write(b'250 queued\r\n')
+      elif command=='QUIT':f.write(b'221 bye\r\n'); f.flush(); break
+      else:f.write(b'250 ok\r\n')
+      f.flush()
   cls.thread=threading.Thread(target=smtp,daemon=True); cls.thread.start()
   for port,enabled in [(8090,False),(8091,True)]:
    env=os.environ.copy(); env['CONTACT_RATE_DIR']=str(cls.tmp/f'rates-{port}')
@@ -69,7 +70,7 @@ class Smoke(unittest.TestCase):
    self.assertEqual(len(re.findall('<h1[ >]',body)),1,path)
    title=re.search('<title>(.*?)</title>',body)[1];self.assertNotIn(title,titles);titles.add(title)
    desc=re.search('name="description" content="([^"]+)"',body)[1];self.assertNotIn(desc,descriptions);descriptions.add(desc)
-  self.assertEqual(len(titles),24)
+  self.assertEqual(len(titles),56)
   self.assertEqual(c.get('/inconnue')[0],404)
   for path in ['/config/site.php','/.env','/vendor/phpmailer/SMTP.php','/tests/smoke.py','/README.md'] : self.assertEqual(c.get(path)[0],404)
  def test_cache_headers_and_versioned_backgrounds(self):
@@ -98,6 +99,24 @@ class Smoke(unittest.TestCase):
   c=Client(8090);data=c.form();data.update(name='<script>alert(1)</script>',email='not-an-email',phone='oops',date='2026-02-31',consent='');status,body=c.post(data);self.assertEqual(status,422);self.assertNotIn('<script>alert',body);self.assertIn('&lt;script&gt;',body);self.assertIn('email valide',body);self.assertIn('date valide',body)
  def test_smtp_tls_success(self):
   c=Client(8091);data=c.form();time.sleep(2.1);status,body=c.post(data);self.assertEqual(status,200);self.assertIn('message a bien été envoyé',body);self.assertEqual(len(self.messages),1);self.assertIn(b'Reply-To: Test Local <person@example.test>',self.messages[0]);self.assertIn(b'office@example.test',self.messages[0]);self.assertNotIn('message a bien été envoyé',c.get('/contact')[1])
+ def test_smtp_tls_success_english(self):
+  c=Client(8091);data=c.form('/en/contact');time.sleep(2.1)
+  status,body=c.post(data,'/en/contact')
+  self.assertEqual(status,200)
+  self.assertIn('Your message has been sent.',body)
+  self.assertIn('<html lang="en">',body)
+  self.assertNotIn('Votre message a bien été envoyé',body)
+  self.assertEqual(len(self.messages),2)
+  self.assertNotIn('Your message has been sent.',c.get('/en/contact')[1])
+ def test_english_validation_preserves_user_text(self):
+  c=Client(8090);data=c.form('/en/contact')
+  data.update(email='not-an-email',name='Accueil',message='Bonjour, chauffeur privé VAN <script>alert(1)</script>')
+  status,body=c.post(data,'/en/contact')
+  self.assertEqual(status,422)
+  self.assertIn('Enter a valid email address.',body)
+  self.assertIn('value="Accueil"',body)
+  self.assertEqual(html.unescape(re.search(r'<textarea[^>]*>(.*?)</textarea>',body,re.S)[1]),data['message'])
+  self.assertNotIn('<script>alert(1)</script>',body)
  def test_unconfigured_and_rate_limit(self):
   c=Client(8090);data=c.form();time.sleep(2.1)
   for _ in range(5):
