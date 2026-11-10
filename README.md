@@ -56,3 +56,13 @@ NODE_PATH=/workspace/.tools/browser/node_modules node tests/browser.cjs
 ```
 
 Ce contrôle utilise Playwright et Chromium (`/usr/bin/chromium`), déjà installés dans l’environnement préparé. Il vérifie les liens internes, les H1, les débordements mobiles, le menu et l’accordéon au clavier, puis enregistre les captures dans `/tmp/driver-*.png`.
+
+## Cache et actualisation des visuels
+
+Les liens des ressources utilisent une empreinte SHA-256 de leur contenu (`?v=…`), et non la date du fichier. La feuille `/styles.css` est générée en PHP à partir de `assets/style.css` et versionne chaque image de fond. Sa propre empreinte change aussi lorsqu’une image change : le hero, les cartes et les bannières suivent donc les mises à jour sans renommer manuellement les fichiers. Les pages HTML demandent une revalidation ; Contact reste en `no-store`. Les styles versionnés peuvent rester en cache longtemps.
+
+Après le premier déploiement de ce correctif, purger une fois les caches Hostinger/LiteSpeed/CDN déjà constitués : du code PHP ne peut pas retirer une ancienne page HTML servie en amont sans exécution de PHP. Conserver les paramètres de requête dans les clés du cache CDN. Les déploiements suivants utilisent automatiquement de nouvelles URL lorsque le contenu change. Ces réglages doivent être contrôlés sur l’hébergement réel après déploiement.
+
+Tests du renouvellement des URL, y compris avec dates et tailles de fichiers conservées : `PHP_BIN=/workspace/.tools/bin/php python3 tests/cache.py`. Les tests HTTP de `tests/smoke.py` vérifient aussi les en-têtes et les images CSS versionnées.
+
+La carte Mercedes Classe V possède désormais son propre visuel parisien (`assets/classe-v-paris-card.webp`), avec le van seul et entier. Ce visuel est indépendant du hero et partagé entre l’accueil et la page Véhicules. Son URL est versionnée automatiquement comme les autres images de fond.

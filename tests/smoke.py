@@ -72,6 +72,24 @@ class Smoke(unittest.TestCase):
   self.assertEqual(len(titles),12)
   self.assertEqual(c.get('/inconnue')[0],404)
   for path in ['/config/site.php','/.env','/vendor/phpmailer/SMTP.php','/tests/smoke.py','/README.md'] : self.assertEqual(c.get(path)[0],404)
+ def test_cache_headers_and_versioned_backgrounds(self):
+  c=Client(8090)
+  response=c.opener.open(c.base+'/')
+  self.assertIn('no-cache',response.headers.get('Cache-Control',''))
+  body=response.read().decode()
+  css_url=html.unescape(re.search(r'rel="stylesheet" href="([^"]+)"',body)[1])
+  self.assertRegex(css_url,r'^/styles\.css\?v=[a-f0-9]{20}$')
+  response=c.opener.open(c.base+css_url)
+  self.assertIn('text/css',response.headers.get('Content-Type',''))
+  self.assertIn('immutable',response.headers.get('Cache-Control',''))
+  css=response.read().decode()
+  urls=re.findall(r"url\('(/assets/[^']+)'\)",css)
+  self.assertTrue(urls)
+  for asset in urls:
+   self.assertRegex(asset,r'\?v=[a-f0-9]{20}$')
+   self.assertEqual(c.opener.open(c.base+asset).status,200)
+  response=c.opener.open(c.base+'/contact')
+  self.assertIn('no-store',response.headers.get('Cache-Control',''))
  def test_csrf(self):
   c=Client(8090);data=c.form();data['csrf']='invalid';status,body=c.post(data);self.assertEqual(status,422);self.assertIn('session a expiré',body)
  def test_honeypot(self):

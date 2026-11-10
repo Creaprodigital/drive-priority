@@ -1,5 +1,17 @@
 <?php
 declare(strict_types=1);
+require __DIR__.'/src/assets.php';
+if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '/styles.css') {
+ header('Content-Type: text/css; charset=utf-8');
+ header('X-Content-Type-Options: nosniff');
+ header('Cache-Control: '.(($_GET['v'] ?? '') === stylesheetVersion() ? 'public, max-age=31536000, immutable' : 'no-cache, must-revalidate'));
+ echo renderedStylesheet();
+ exit;
+}
+// Revalider les pages pour récupérer les empreintes des nouveaux visuels.
+header('Cache-Control: no-cache, must-revalidate');
+header('X-LiteSpeed-Cache-Control: no-cache');
+
 $site=require __DIR__.'/config/site.php';
 require __DIR__.'/src/content.php'; require __DIR__.'/src/legal.php';
 function siteText(array $items, array $site): array {
