@@ -158,3 +158,11 @@
 
 .contact-details .contact-email{display:block;margin-top:12px}
 .contact-email{overflow-wrap:anywhere}
+
+/* Lien de conversation uniquement : aucun widget ni script externe. */
+.whatsapp-float{position:fixed;right:max(24px,env(safe-area-inset-right));bottom:calc(24px + env(safe-area-inset-bottom));z-index:40;display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:#087f45;color:#fff;border:2px solid #fff;box-shadow:0 5px 22px #0004;transition:background .2s,transform .2s}
+.whatsapp-float svg{width:32px;height:32px}
+.whatsapp-float:hover{background:#066a39;transform:translateY(-3px)}
+.whatsapp-float:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.site-footer{padding-bottom:84px}
+@media(max-width:640px){.whatsapp-float{width:56px;height:56px;right:max(16px,env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom))}.whatsapp-float svg{width:30px;height:30px}}
