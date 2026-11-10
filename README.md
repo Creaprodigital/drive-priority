@@ -45,7 +45,7 @@ Les images WebP sont des illustrations générées ou retouchées pour ce projet
 
 ## À compléter avant publication
 
-Les pages juridiques sont des projets. Vérifier forme juridique, RCS, responsable de publication, inscription VTC, assurances, email, horaires, médiateur effectivement désigné, clauses de paiement/annulation/attente, droit de rétractation selon la qualification de chaque prestation, conservation des demandes et localisation/sous-traitants. Les coordonnées de l’entité Hostinger contractante n’ont pas été vérifiées : les compléter depuis le contrat et les sources officielles. Ne pas considérer ces textes comme une validation juridique.
+Les pages juridiques sont des projets. Vérifier forme juridique, RCS, responsable de publication, inscription VTC, assurances, horaires, médiateur effectivement désigné, clauses de paiement/annulation/attente, droit de rétractation selon la qualification de chaque prestation, conservation des demandes et localisation/sous-traitants. Les coordonnées de l’entité Hostinger contractante n’ont pas été vérifiées : les compléter depuis le contrat et les sources officielles. Ne pas considérer ces textes comme une validation juridique.
 
 Le site n’est ni publié sur Hostinger ni poussé sur GitHub par cette livraison.
 

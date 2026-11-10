@@ -15,7 +15,7 @@ header('X-LiteSpeed-Cache-Control: no-cache');
 $site=require __DIR__.'/config/site.php';
 require __DIR__.'/src/content.php'; require __DIR__.'/src/legal.php'; require __DIR__.'/src/destinations.php';
 function siteText(array $items, array $site): array {
- $replacements=[]; foreach(['siret','siren','vat','capital','address','phone','company'] as $key) $replacements['__'.strtoupper($key).'__']=$site[$key];
+ $replacements=[]; foreach(['siret','siren','vat','capital','address','phone','company','email'] as $key) $replacements['__'.strtoupper($key).'__']=$site[$key];
  foreach($items as $key=>$value) $items[$key]=is_array($value)?siteText($value,$site):strtr($value,$replacements);
  return $items;
 }
