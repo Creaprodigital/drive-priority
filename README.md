@@ -68,3 +68,5 @@ Tests du renouvellement des URL, y compris avec dates et tailles de fichiers con
 La carte Mercedes Classe V possède désormais son propre visuel parisien (`assets/classe-v-paris-card.webp`), avec le van seul et entier. Ce visuel est indépendant du hero et partagé entre l’accueil et la page Véhicules. Son URL est versionnée automatiquement comme les autres images de fond.
 
 Les Classes C et E disposent également de leurs propres illustrations parisiennes (`classe-c-paris-card.webp` et `classe-e-paris-card.webp`), avec chaque berline entière et un cadrage identique à la Classe V. Ces images n’affectent pas le hero.
+
+Les trois cartes véhicules affichent une grande photographie sur toute leur largeur, au-dessus des informations, avec un zoom adapté à chaque modèle et un cadrage conservant les véhicules entiers.

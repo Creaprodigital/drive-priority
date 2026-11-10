@@ -8,11 +8,13 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     const cards = await page.locator('.vehicle-card').evaluateAll(elements => elements.map(card => {
       const bounds = card.getBoundingClientRect();
       const info = card.querySelector('.vehicle-info').getBoundingClientRect();
-      const background = getComputedStyle(card.querySelector('.vehicle-visual')).backgroundImage;
-      return {height: bounds.height, textBottom: info.bottom, cardBottom: bounds.bottom, background};
+      const visual = card.querySelector('.vehicle-visual');
+      const photo = visual.getBoundingClientRect();
+      const background = getComputedStyle(visual).backgroundImage;
+      return {height: bounds.height, textBottom: info.bottom, cardBottom: bounds.bottom, photoWidth: photo.width, cardWidth: bounds.width, photoHeight: photo.height, background};
     }));
     if (cards.length === 3 && ['c','e','v'].some((model, index) => !cards[index].background.includes('/assets/classe-' + model + '-paris-card.webp?v='))) throw Error('Chaque véhicule doit conserver sa photo dédiée et versionnée');
-    if (cards.length !== 3 || cards.some(card => card.height > 360 || card.textBottom > card.cardBottom + 1 || card.background === 'none')) {
+    if (cards.length !== 3 || cards.some(card => card.height > 600 || card.photoWidth < card.cardWidth - 3 || card.photoHeight < 120 || card.textBottom > card.cardBottom + 1 || card.background === 'none')) {
       throw Error('Cartes véhicules : dimensions, texte ou fond incorrects à ' + width + 'px sur ' + route);
     }
   }

@@ -66,3 +66,11 @@
 @media(min-width:641px) and (max-width:1200px), (max-width:380px){
 .vehicle-card .vehicle-visual{mask-image:linear-gradient(#000 90%,transparent)}
 }
+/* Plus de place pour voir les véhicules : photo large au-dessus des informations. */
+.vehicle-card{display:flex;flex-direction:column;height:auto;min-height:0}
+.vehicle-card .vehicle-visual{width:100%;height:auto;aspect-ratio:5/3;flex:0 0 auto;background-size:135% auto;background-position:center 60%;mask-image:none}
+.vehicle-card .vehicle-info{align-self:stretch;padding:20px 22px 24px}
+@media(max-width:640px){
+.vehicle-card .vehicle-info{padding:18px 20px 22px}
+}
+.vehicle-1 .vehicle-visual{background-size:150% auto}
