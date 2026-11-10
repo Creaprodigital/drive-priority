@@ -66,3 +66,5 @@ Après le premier déploiement de ce correctif, purger une fois les caches Hosti
 Tests du renouvellement des URL, y compris avec dates et tailles de fichiers conservées : `PHP_BIN=/workspace/.tools/bin/php python3 tests/cache.py`. Les tests HTTP de `tests/smoke.py` vérifient aussi les en-têtes et les images CSS versionnées.
 
 La carte Mercedes Classe V possède désormais son propre visuel parisien (`assets/classe-v-paris-card.webp`), avec le van seul et entier. Ce visuel est indépendant du hero et partagé entre l’accueil et la page Véhicules. Son URL est versionnée automatiquement comme les autres images de fond.
+
+Les Classes C et E disposent également de leurs propres illustrations parisiennes (`classe-c-paris-card.webp` et `classe-e-paris-card.webp`), avec chaque berline entière et un cadrage identique à la Classe V. Ces images n’affectent pas le hero.

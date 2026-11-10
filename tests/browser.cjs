@@ -11,7 +11,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       const background = getComputedStyle(card.querySelector('.vehicle-visual')).backgroundImage;
       return {height: bounds.height, textBottom: info.bottom, cardBottom: bounds.bottom, background};
     }));
-    if (cards.length === 3 && !cards[2].background.includes('/assets/classe-v-paris-card.webp?v=')) throw Error('La Classe V doit conserver sa photo dédiée et versionnée');
+    if (cards.length === 3 && ['c','e','v'].some((model, index) => !cards[index].background.includes('/assets/classe-' + model + '-paris-card.webp?v='))) throw Error('Chaque véhicule doit conserver sa photo dédiée et versionnée');
     if (cards.length !== 3 || cards.some(card => card.height > 360 || card.textBottom > card.cardBottom + 1 || card.background === 'none')) {
       throw Error('Cartes véhicules : dimensions, texte ou fond incorrects à ' + width + 'px sur ' + route);
     }

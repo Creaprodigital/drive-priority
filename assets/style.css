@@ -58,8 +58,11 @@
 .vehicle-info{padding:8px 18px 18px}
 }
 
-/* Visuel dédié à la Classe V : décor parisien sans berline au premier plan. */
-.vehicle-2 .vehicle-visual{background-image:url('/assets/classe-v-paris-card.webp');background-size:cover;background-position:center 60%;opacity:1;mask-image:linear-gradient(90deg,#000 97%,transparent)}
+/* Un visuel dédié à chaque véhicule, indépendant du hero. */
+.vehicle-0 .vehicle-visual{background-image:url('/assets/classe-c-paris-card.webp')}
+.vehicle-1 .vehicle-visual{background-image:url('/assets/classe-e-paris-card.webp')}
+.vehicle-2 .vehicle-visual{background-image:url('/assets/classe-v-paris-card.webp')}
+.vehicle-card .vehicle-visual{background-size:cover;background-position:center 60%;opacity:1;mask-image:linear-gradient(90deg,#000 97%,transparent)}
 @media(min-width:641px) and (max-width:1200px), (max-width:380px){
-.vehicle-2 .vehicle-visual{mask-image:linear-gradient(#000 90%,transparent)}
+.vehicle-card .vehicle-visual{mask-image:linear-gradient(#000 90%,transparent)}
 }
